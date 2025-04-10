@@ -1,0 +1,106 @@
+﻿<Window x:Class="ASRS.Specialist"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ASRS"
+        mc:Ignorable="d"
+            Title="Специалист по математическому обеспечению" Height="350" Width="500" ResizeMode="NoResize">
+
+    <Grid Margin="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Первая группа -->
+        <GroupBox Header="Параметры метода решения системы уравнений" Grid.Row="0" Padding="10" Margin="0,0,0,10">
+            <StackPanel>
+                <!-- Строка 1 -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Максимальное число итераций вычисления" 
+                         TextWrapping="Wrap" 
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"/>
+                    <TextBox Grid.Column="1" 
+                       Width="75" 
+                       Margin="10,0,0,0"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"/>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Максимальное изменение решения после выполнения итерации" 
+                         TextWrapping="Wrap" 
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"/>
+                    <TextBox Grid.Column="1" 
+                       Width="75" 
+                       Margin="10,0,0,0"
+                       HorizontalAlignment="Right" 
+                       VerticalAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Вторая группа -->
+        <GroupBox Header="Параметры метода оптимизации" Grid.Row="1" Padding="10" Margin="0,0,0,10">
+            <StackPanel>
+                <!-- Строка 1 -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Text="Максимальное число итераций" 
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"/>
+                    <TextBox Grid.Column="1" 
+                       Width="75" 
+                       Margin="10,0,0,0"
+                       HorizontalAlignment="Right" 
+                       VerticalAlignment="Center"/>
+                </Grid>
+
+                <!-- Строка 2 -->
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Максимальное изменение значения целевой функции после выполнения итерации" 
+                         TextWrapping="Wrap" 
+                         VerticalAlignment="Center"
+                         HorizontalAlignment="Stretch"/>
+                    <TextBox Grid.Column="1" 
+                       Width="75" 
+                       Margin="10,0,0,0"
+                       HorizontalAlignment="Right"
+                       VerticalAlignment="Center"/>
+                </Grid>
+            </StackPanel>
+        </GroupBox>
+
+        <!-- Кнопка -->
+        <Button Content="Сохранить" 
+          Grid.Row="3" 
+          HorizontalAlignment="Center" 
+          VerticalAlignment="Center" 
+          Margin="10,10" 
+          Height="40" 
+          Width="200"/>
+    </Grid>
+</Window>

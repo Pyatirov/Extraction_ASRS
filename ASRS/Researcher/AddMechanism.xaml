@@ -1,0 +1,85 @@
+﻿<Window x:Class="ASRS.AddMechanism"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ASRS"
+        mc:Ignorable="d"
+            Title="Настройка механизма" Height="450" Width="800" ResizeMode="NoResize" Closed="AddMechanism_Closed">
+    <Window.Resources>
+        <local:NullToVisibilityConverter x:Key="NullToVisibilityConverter"/>
+        <local:OneToVisibilityConverter x:Key="OneToVisibilityConverter"/>
+        <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
+    </Window.Resources>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Описание модели:" VerticalAlignment="Center" Margin="10,10,0,5"/>
+        <TextBox x:Name="tb_Mechanism_Name" Margin="10,5,10,5" Grid.Row="1" Grid.ColumnSpan="2"/>
+        <TextBlock Text="Выберите реакции:" Grid.Row="2" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="10,5,0,0" Height="16" Width="106"/>
+        <DataGrid x:Name="dg_Reactions" AutoGenerateColumns="False" 
+      SelectionMode="Single" CanUserAddRows="False" 
+      Grid.Row="3" Margin="10,10,10,0" Grid.ColumnSpan="2">
+            <DataGrid.Columns>
+                <DataGridCheckBoxColumn Header="Выбрать" Width="Auto" Binding="{Binding IsSelected, Mode=TwoWay}"/>
+                <DataGridTemplateColumn Header="Реакция" Width="*">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                                <!-- Реагент 1 -->
+                                <StackPanel Orientation="Horizontal" 
+                               Visibility="{Binding HasReagent1, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding KInp1Display}" Margin="0,0,2,0"/>
+                                    <TextBlock Text="{Binding Reaction.Inp1}"/>
+                                    <TextBlock Text="{Binding Ind1Display}" VerticalAlignment="Bottom" Margin="2,-2,0,0" FontSize="12"/>
+                                </StackPanel>
+
+                                <!-- Разделитель 1 -->
+                                <TextBlock Text=" + " Visibility="{Binding ShowPlus1, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                                <!-- Реагент 2 -->
+                                <StackPanel Orientation="Horizontal" 
+                               Visibility="{Binding HasReagent2, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding KInp2Display}" Margin="0,0,2,0"/>
+                                    <TextBlock Text="{Binding Reaction.Inp2}"/>
+                                    <TextBlock Text="{Binding Ind2Display}" VerticalAlignment="Bottom" Margin="2,-2,0,0" FontSize="12"/>
+                                </StackPanel>
+
+                                <!-- Разделитель 2 -->
+                                <TextBlock Text=" + " Visibility="{Binding ShowPlus2, Converter={StaticResource BooleanToVisibilityConverter}}"/>
+
+                                <!-- Реагент 3 -->
+                                <StackPanel Orientation="Horizontal" 
+                               Visibility="{Binding HasReagent3, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                    <TextBlock Text="{Binding KInp3Display}" Margin="0,0,2,0"/>
+                                    <TextBlock Text="{Binding Reaction.Inp3}"/>
+                                    <TextBlock Text="{Binding Ind3Display}" VerticalAlignment="Bottom" Margin="2,-2,0,0" FontSize="12"/>
+                                </StackPanel>
+
+                                <!-- Стрелка -->
+                                <TextBlock Text=" → " Margin="5,0"/>
+
+                                <!-- Продукт -->
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding KProdDisplay}" Margin="0,0,2,0"/>
+                                    <TextBlock Text="{Binding Reaction.Prod}"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Button Content="Создать модель" Click="bt_Create_Mechanism_Click" Padding="10 5" Grid.Row="4" Margin="10,10,10,0" Grid.Column="0" Height="40" Width="200" HorizontalAlignment="Right"/>
+        <Button Content="Добавить новую реакцию" Click="bt_Add_Reaction_Click" Padding="10 5" Grid.Row="4" Margin="10,10,5,0" Grid.Column="1" Height="40" Width="200" HorizontalAlignment="Left"/>
+    </Grid>
+</Window>
