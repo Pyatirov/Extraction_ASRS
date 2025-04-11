@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using static alglib;
 
 namespace ASRS
 {
@@ -53,16 +54,60 @@ namespace ASRS
             for (int i = 0; i < pointsCount; i++)
             {
                 xInitial = XStart[i];
+                double[] x_Initial = new double[5];
+                double[] K = new double[15];
+                double[] initial_b = new double[5];
                 b = xInitial;
-                var solver = new PythonSolver();
-                var solution = solver.Solve(xInitial, inputK, b);
-                Solutions.Add(solution);
-                List<double> optimalInputK = new List<double>(inputK);
-                optimalInputK[12] = 28.973;
-                optimalInputK[13] = 0;
-                var newsolver = new PythonSolver();
-                var optimalsolution = solver.Solve(xInitial, optimalInputK, b);
-                optimalSolutions.Add(optimalsolution);
+                for (int j = 0; j < x_Initial.Length; j++)
+                {
+                    x_Initial[j] = xInitial[j];
+                    initial_b[j] = b[j];
+                }
+                for (int j = 0; j < inputK.Count; j++)
+                {
+                    K[j] = inputK[j];
+                }
+                //var solver = new PythonSolver();
+                //var solution = solver.Solve(xInitial, inputK, b);
+                //Solutions.Add(solution);
+                //List<double> optimalInputK = new List<double>(inputK);
+                //optimalInputK[12] = 28.973;
+                //optimalInputK[13] = 0;
+                //var newsolver = new PythonSolver();
+                //var optimalsolution = solver.Solve(xInitial, optimalInputK, b);
+                //optimalSolutions.Add(optimalsolution);
+                // Настройка оптимизации
+                minlmstate state;
+                minlmreport report;
+                alglib.minlmcreatev(
+                            5,             // Количество переменных
+                            5,             // Количество функций остатков
+                            x_Initial,
+                            0.0001,
+                            out state
+                        );
+
+                // 2. Исправление для minlmsetcond:
+                alglib.minlmsetcond(
+                    state,
+                    1e-6,          // Точность остатков (ftol)         // Точность параметров (xtol)
+                    0              // Максимальное число итераций (0 = по умолчанию)
+                );
+
+                var data = Tuple.Create(K, initial_b);
+                alglib.minlmoptimize(state, Residuals, null, data);
+
+                double[] optimizedParams;
+                alglib.minlmresults(state, out optimizedParams, out report);
+
+                tb_Results.Text += "Оптимальные параметры: \n";
+                tb_Results.Text += $" {string.Join(", ", optimizedParams.Select(v => v.ToString("F6")))}";
+
+                double[] residuals = new double[5];
+                Residuals(optimizedParams, residuals, data);
+                tb_Results.Text += "\nОстатки:";
+                tb_Results.Text += $"{string.Join(", ", residuals.Select(r => r.ToString("F6")))}";
+
             }
 
             List<List<double>> Entry = new List<List<double>>();
@@ -217,47 +262,47 @@ namespace ASRS
                 calcEqConcs[i].Add(xFinalOptimal[8]);
             }
 
-            List<double> result = new List<double>();
+            //List<double> result = new List<double>();
 
-            double totalSum = 0;
+            //double totalSum = 0;
 
-            for (int i = 0; i < expPointsValues.Count; i++)
-            {
-                List<double> expPoint = expPointsValues[i];
-                List<double> calcPoint = calcEqConcs[i];
-                double sum = 0;
+            //for (int i = 0; i < expPointsValues.Count; i++)
+            //{
+            //    List<double> expPoint = expPointsValues[i];
+            //    List<double> calcPoint = calcEqConcs[i];
+            //    double sum = 0;
 
-                for (int j = 0; j < expPoint.Count; j += 2)
-                {
-                    double exp_wat = expPoint[j];
-                    double exp_org = expPoint[j + 1];
-                    double calc_wat = calcPoint[j];
-                    double calc_org = calcPoint[j + 1];
+            //    for (int j = 0; j < expPoint.Count; j += 2)
+            //    {
+            //        double exp_wat = expPoint[j];
+            //        double exp_org = expPoint[j + 1];
+            //        double calc_wat = calcPoint[j];
+            //        double calc_org = calcPoint[j + 1];
 
-                    // Проверка на деление на ноль для C_wat
-                    double term_wat = 0;
-                    if (calc_wat != 0 && exp_wat != 0) // [[2]]
-                    {
-                        term_wat = Math.Pow((exp_wat / calc_wat) - 1, 2) + Math.Pow((calc_wat / exp_wat) - 1, 2);
-                    }
+            //        // Проверка на деление на ноль для C_wat
+            //        double term_wat = 0;
+            //        if (calc_wat != 0 && exp_wat != 0) // [[2]]
+            //        {
+            //            term_wat = Math.Pow((exp_wat / calc_wat) - 1, 2) + Math.Pow((calc_wat / exp_wat) - 1, 2);
+            //        }
 
-                    // Проверка на деление на ноль для C_org
-                    double term_org = 0;
-                    if (calc_org != 0 && exp_org != 0) // [[2]]
-                    {
-                        term_org = Math.Pow((exp_org / calc_org) - 1, 2) + Math.Pow((calc_org / exp_org) - 1, 2);
-                    }
+            //        // Проверка на деление на ноль для C_org
+            //        double term_org = 0;
+            //        if (calc_org != 0 && exp_org != 0) // [[2]]
+            //        {
+            //            term_org = Math.Pow((exp_org / calc_org) - 1, 2) + Math.Pow((calc_org / exp_org) - 1, 2);
+            //        }
 
-                    sum += term_wat + term_org;
+            //        sum += term_wat + term_org;
 
-                    tb_Results.Text += $"Сумма квадратов отклонений в точке №{i + 1} (пара {j / 2 + 1}):\n\n";
-                    tb_Results.Text += sum.ToString("F4") + "\n"; // [[2]]
-                }
-                totalSum += sum;
-                result.Add(sum);
-            }
+            //        tb_Results.Text += $"Сумма квадратов отклонений в точке №{i + 1} (пара {j / 2 + 1}):\n\n";
+            //        tb_Results.Text += sum.ToString("F4") + "\n"; // [[2]]
+            //    }
+            //    totalSum += sum;
+            //    result.Add(sum);
+            //}
 
-            tb_Results.Text += $"Сумма по всем точкам F = {totalSum}";
+            //tb_Results.Text += $"Сумма по всем точкам F = {totalSum}";
 
             //List<List<double>> totalCalcConcs = new List<List<double>>();
             //foreach (var innerList in calcEqConcs)
@@ -278,6 +323,53 @@ namespace ASRS
             //    }
             //}
 
+        }
+
+        public static void Residuals(double[] x, double[] fi, object obj)
+        {
+            var data = (Tuple<double[], double[]>)obj;
+            double[] K = data.Item1;
+            double[] b = data.Item2;
+
+            double x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4];
+
+            // Уравнение 1
+            fi[0] = b[0] - (x1
+                + K[7] * x1 * x2
+                + K[12] * x1 * x2 * x2 * x2 * x4 * x4 * x4
+                + K[13] * x1 * x2 * x2 * x2 * x4 * x4 * x4 * x4);
+
+            // Уравнение 2
+            fi[1] = b[1] - (x2
+                + K[5] * x2 * x3
+                + K[7] * x1 * x2
+                + K[8] * x2 * x4 * x4 * x5
+                + 3 * K[9] * x2 * x2 * x2 * x3 * x3 * x3 * x4
+                + K[10] * x2 * x3 * x4
+                + 2 * K[11] * x2 * x2 * x3 * x3 * x4
+                + 3 * K[12] * x1 * x2 * x2 * x2 * x4 * x4 * x4
+                + 3 * K[13] * x1 * x2 * x2 * x2 * x4 * x4 * x4 * x4);
+
+            // Уравнение 3
+            fi[2] = b[2] - (x3
+                + K[5] * x2 * x3
+                + K[9] * x2 * x2 * x2 * x3 * x3 * x3 * x4
+                + K[10] * x2 * x3 * x4
+                + 2 * K[11] * x2 * x2 * x3 * x3 * x4);
+
+            // Уравнение 4
+            fi[3] = b[3] - (x4
+                + 2 * K[8] * x2 * x4 * x4 * x5
+                + K[9] * x2 * x2 * x2 * x3 * x3 * x3 * x4
+                + K[10] * x2 * x3 * x4
+                + K[11] * x2 * x2 * x3 * x3 * x4
+                + 3 * K[12] * x1 * x2 * x2 * x2 * x4 * x4 * x4
+                + 4 * K[13] * x1 * x2 * x2 * x2 * x4 * x4 * x4 * x4
+                + 2 * K[14] * x4 * x4);
+
+            // Уравнение 5
+            fi[4] = b[4] - (x5
+                + K[8] * x2 * x4 * x4 * x5);
         }
 
         private void ValidateData()
