@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ASRS"
         mc:Ignorable="d"
-            Title="АСНИ" Height="250" Width="250" ResizeMode="NoResize">
+            Title="АСНИ" Height="300" Width="300" ResizeMode="NoResize">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition/>

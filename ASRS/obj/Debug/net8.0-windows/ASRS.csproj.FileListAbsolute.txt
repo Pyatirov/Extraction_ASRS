@@ -76,3 +76,5 @@ D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\refint\ASRS.dll
 D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\ASRS.pdb
 D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\ASRS.genruntimeconfig.cache
 D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\ref\ASRS.dll
+D:\Projects\ASRS\ASRS\bin\Debug\net8.0-windows\alglib.net.dll
+D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\ASRS.sourcelink.json

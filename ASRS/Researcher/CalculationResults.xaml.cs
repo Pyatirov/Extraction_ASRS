@@ -83,7 +83,7 @@ namespace ASRS
                             5,             // Количество переменных
                             5,             // Количество функций остатков
                             x_Initial,
-                            0.0001,
+                            1e-6,
                             out state
                         );
 
@@ -101,12 +101,17 @@ namespace ASRS
                 alglib.minlmresults(state, out optimizedParams, out report);
 
                 tb_Results.Text += "Оптимальные параметры: \n";
-                tb_Results.Text += $" {string.Join(", ", optimizedParams.Select(v => v.ToString("F6")))}";
+                tb_Results.Text += $" {string.Join(", ", optimizedParams.Select(v => v.ToString("F6")))}\n";
 
                 double[] residuals = new double[5];
                 Residuals(optimizedParams, residuals, data);
-                tb_Results.Text += "\nОстатки:";
-                tb_Results.Text += $"{string.Join(", ", residuals.Select(r => r.ToString("F6")))}";
+                //tb_Results.Text += "\nОстатки:";
+                //tb_Results.Text += $"{string.Join(", ", residuals.Select(r => r.ToString("F6")))}\n\n";
+
+                var solver = new PythonSolver();
+                var solution = solver.Solve(xInitial, inputK, b);
+
+                Solutions.Add(solution);
 
             }
 
