@@ -151,6 +151,31 @@ namespace ASRS
             Calculation(selectedMechanism);
         }
 
+        private async void bt_Show_Component_Matrix_Click(object sender, RoutedEventArgs e)
+        {
+            List<List<int>> ComponentMatrix = new List<List<int>>();
+            List<Reaction> reactions = new List<Reaction>();
+            List<BaseForm> baseForms = new List<BaseForm>();
+            List<FormingForm> formingForms = new List<FormingForm>();
+
+            var selectedMechanism = cb_Mechanisms_Experiment.SelectedItem as Mechanisms;
+            if (selectedMechanism == null)
+            {
+                MessageBox.Show("Выберите модель!");
+                return;
+            }
+
+            using (var context = new ApplicationContext())
+            {
+                reactions = await GetReactionsForMechanismAsync(context, selectedMechanism);
+                baseForms = await GetBaseFormsFromReactionsAsync(context, reactions);
+                formingForms = await GetFormingFormsFromReactionsAsync(context, reactions);
+            }
+            ComponentMatrix = BuildComponentMatrix(reactions, baseForms);
+            ComponentMatrix matrix = new ComponentMatrix(baseForms, formingForms, ComponentMatrix);
+            matrix.Show();
+        }
+
         private async void Create_Input_Constants_Grid_Async()
         {
             try
@@ -672,20 +697,6 @@ namespace ASRS
 
         private async void Calculation(Mechanisms selectedMechanism)
         {
-            List<List<int>> ComponentMatrix = new List<List<int>>();
-            List<Reaction> reactions = new List<Reaction>();
-            List<BaseForm> baseForms = new List<BaseForm>();
-            List<FormingForm> formingForms = new List<FormingForm>();
-
-            using (var context = new ApplicationContext())
-            {
-                reactions = await GetReactionsForMechanismAsync(context, selectedMechanism);
-                baseForms = await GetBaseFormsFromReactionsAsync(context, reactions);
-                formingForms = await GetFormingFormsFromReactionsAsync(context, reactions);
-            }
-
-            ComponentMatrix = BuildComponentMatrix(reactions, baseForms);
-
             List<double> Constants = new List<double>();
 
             Constants.Clear();
@@ -798,7 +809,7 @@ namespace ASRS
             }
             var pointsCount = await GetPointsCountPerMechanismAsync(selectedMechanism);
 
-            CalculationResults calculationResults = new CalculationResults(baseForms, formingForms, ComponentMatrix, b, XStart, Constants, pointsCount, expPointsValues);
+            CalculationResults calculationResults = new CalculationResults(b, XStart, Constants, pointsCount, expPointsValues);
             calculationResults.Show();
 
         }
@@ -875,74 +886,74 @@ namespace ASRS
                 this.formingForms = formingForms;
             }
 
-            //public Dictionary<int, Dictionary<string, string>> BuildEquations()
-            //{
-            //    var equationSystem = new Dictionary<int, Dictionary<string, string>>();
+            public Dictionary<int, Dictionary<string, string>> BuildEquations()
+            {
+                var equationSystem = new Dictionary<int, Dictionary<string, string>>();
 
-            //    // Словарь: FormName → Константа K
-            //    var constantsDict = concentrationConstants
-            //        .ToDictionary(cc => cc.FormName, cc => cc.Value);
+                // Словарь: FormName → Константа K
+                var constantsDict = concentrationConstants
+                    .ToDictionary(cc => cc.FormName, cc => cc.Value);
 
-            //    // Словарь: FormName → Реакция
-            //    var reactionForForm = formingForms
-            //        .ToDictionary(
-            //            ff => ff.Name,
-            //            ff => reactions.FirstOrDefault(r => r.Prod == ff.Name)
-            //        );
+                // Словарь: FormName → Реакция
+                var reactionForForm = formingForms
+                    .ToDictionary(
+                        ff => ff.Name,
+                        ff => reactions.FirstOrDefault(r => r.Prod == ff.Name)
+                    );
 
-            //    // Для каждой точки
-            //    foreach (var point in concentrationsSum
-            //        .Select(c => c.PointId)
-            //        .Distinct())
-            //    {
-            //        var pointConcentrations = concentrationsSum
-            //            .Where(c => c.PointId == point)
-            //            .ToDictionary(c => c.FormName, c => c.TotalConcentration);
+                // Для каждой точки
+                foreach (var point in concentrationsSum
+                    .Select(c => c.PointId)
+                    .Distinct())
+                {
+                    var pointConcentrations = concentrationsSum
+                        .Where(c => c.PointId == point)
+                        .ToDictionary(c => c.FormName, c => c.TotalConcentration);
 
-            //        var equationsForPoint = new Dictionary<string, string>();
+                    var equationsForPoint = new Dictionary<string, string>();
 
-            //        // Для каждой базовой формы
-            //        foreach (var baseForm in baseForms)
-            //        {
-            //            var formName = baseForm.Name;
-            //            var equation = $"[{formName}] = ";
+                    // Для каждой базовой формы
+                    foreach (var baseForm in baseForms)
+                    {
+                        var formName = baseForm.Name;
+                        var equation = $"[{formName}] = ";
 
-            //            // Суммируем вклады всех реакций, где форма участвует
-            //            var terms = new List<string>();
-            //            foreach (var reaction in reactions)
-            //            {
-            //                // Проверяем, участвует ли форма как входной компонент
-            //                if (reaction.Inp1 == formName || reaction.Inp2 == formName || reaction.Inp3 == formName)
-            //                {
-            //                    // Получаем коэффициенты компонентов
-            //                    var components = new[]
-            //                    {
-            //                    (reaction.Inp1, reaction.KInp1),
-            //                    (reaction.Inp2, reaction.KInp2),
-            //                    (reaction.Inp3, reaction.KInp3)
-            //                };
+                        // Суммируем вклады всех реакций, где форма участвует
+                        var terms = new List<string>();
+                        foreach (var reaction in reactions)
+                        {
+                            // Проверяем, участвует ли форма как входной компонент
+                            if (reaction.Inp1 == formName || reaction.Inp2 == formName || reaction.Inp3 == formName)
+                            {
+                                // Получаем коэффициенты компонентов
+                                var components = new[]
+                                {
+                                (reaction.Inp1, reaction.KInp1),
+                                (reaction.Inp2, reaction.KInp2),
+                                (reaction.Inp3, reaction.KInp3)
+                            };
 
-            //                    // Формируем член уравнения
-            //                    var term = $"{constantsDict[reaction.Prod]}";
-            //                    foreach (var (component, coeff) in components)
-            //                    {
-            //                        if (string.IsNullOrEmpty(component) || coeff == null || coeff == 0)
-            //                            continue;
-            //                        term += $" * [{component}]^{coeff.Value}";
-            //                    }
-            //                    terms.Add($"({term})");
-            //                }
-            //            }
+                                // Формируем член уравнения
+                                var term = $"{constantsDict[reaction.Prod]}";
+                                foreach (var (component, coeff) in components)
+                                {
+                                    if (string.IsNullOrEmpty(component) || coeff == null || coeff == 0)
+                                        continue;
+                                    term += $" * [{component}]^{coeff.Value}";
+                                }
+                                terms.Add($"({term})");
+                            }
+                        }
 
-            //            equation += string.Join(" + ", terms);
-            //            equationsForPoint[formName] = equation;
-            //        }
+                        equation += string.Join(" + ", terms);
+                        equationsForPoint[formName] = equation;
+                    }
 
-            //        equationSystem[point] = equationsForPoint;
-            //    }
+                    equationSystem[point] = equationsForPoint;
+                }
 
-            //    return equationSystem;
-            //}
+                return equationSystem;
+            }
         }
 
         public class ConcentrationSummary
@@ -951,9 +962,6 @@ namespace ASRS
             public string? FormName { get; set; }
             public double TotalConcentration { get; set; }
         }
-
-
-
 
         public class CalculationResult
         {

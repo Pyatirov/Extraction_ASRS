@@ -7,18 +7,6 @@
         mc:Ignorable="d"
             Title="Результаты вычисления" Height="450" Width="800">
     <Grid>
-        <StackPanel>
-            <TextBlock Text="Компонентная матрица:" Margin="10,10,0,0"/>
-            <DataGrid x:Name="dg_Component_Matrix"
-                  AutoGenerateColumns="False"
-                  ItemsSource="{Binding Rows}"
-                  CanUserAddRows="False"
-                  CanUserDeleteRows="False"
-                  IsReadOnly="True"
-                  Margin="10"
-                  HorizontalScrollBarVisibility="Auto"
-                  VerticalScrollBarVisibility="Auto"/>
-        </StackPanel>
         <TextBox x:Name="tb_Results"/>
     </Grid>
 </Window>

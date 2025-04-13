@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ASRS"
         mc:Ignorable="d"
-            Title="Исследователь" Height="700" Width="450" ResizeMode="NoResize" Closed="Researcher_Closed">
+            Title="Исследователь" Height="700" Width="500" ResizeMode="NoResize" Closed="Researcher_Closed">
     <Window.Resources>
         <local:RowToVisibilityConverter x:Key="RowToVisibilityConverter"/>
     </Window.Resources>
@@ -20,19 +20,24 @@
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition/>
+                        <ColumnDefinition/>
+                    </Grid.ColumnDefinitions>
 
-                    <TextBlock Grid.Row="0" Text="Модель реакции" Margin="10,5"/>
-                    <ComboBox x:Name="cb_Mechanisms_Experiment" Grid.Row="1" Margin="10,0, 0, 10" Width="252" Height="25" DisplayMemberPath="Info" HorizontalAlignment="Left" SelectionChanged="cb_Mechanisms_Experiment_SelectionChanged"/>
+                    <TextBlock Grid.Row="0" Text="Модель экстракции" Margin="10,5"/>
+                    <ComboBox x:Name="cb_Mechanisms_Experiment" Grid.Row="1" Margin="10,0,10,10" Height="25" DisplayMemberPath="Info" SelectionChanged="cb_Mechanisms_Experiment_SelectionChanged"/>
 
-                    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <UniformGrid x:Name="ug_Constants_Inputs_Panel" Columns="1" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                     </ScrollViewer>
 
-                    <Button Click="bt_Calculate_Click" Grid.Row="3" Content="Расчет" Margin="10,10" Height="40" Width="200"/>
+                    <Button Click="bt_Calculate_Click" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Расчет" Margin="10,10" Height="40" Width="200"/>
+                    <Button Click="bt_Show_Component_Matrix_Click" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="Посмотреть компонентную матрицу" Height="40" Width="210"/>
 
                 </Grid>
             </TabItem>
-            <TabItem Header="Модели реакции">
+            <TabItem Header="Модели экстракции">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*"/>
