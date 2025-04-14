@@ -1,256 +1,72 @@
 ﻿using ASRS.Database;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using static alglib;
+using static ASRS.Database.ConnectToDB;
+using static ASRS.Researcher;
 
 namespace ASRS
 {
     public partial class CalculationResults : Window
     {
         public ObservableCollection<MatrixRow> Rows { get; } = new ObservableCollection<MatrixRow>();
-        //private readonly List<BaseForm> _baseForms;
-        //private readonly List<FormingForm> _formingForms;
-        //private readonly List<List<int>> _componentMatrix;
-        private List<List<double>> initial_b;
-        private List<List<double>> XStart;
-        private List<double> inputK;
-        private int pointsCount;
-        private List<List<double>> expPointsValues;
+        private List<List<double>> solutions;
 
-        public CalculationResults(
-            List<List<double>> _b,
-            List<List<double>> _XStart,
-            List<double> _inputK,
-            int _pointsCount,
-            List<List<double>> _expPointsValues)
+        public CalculationResults(List<List<double>> Solutions)
         {
             InitializeComponent();
-
-            //_baseForms = baseForms ?? throw new System.ArgumentNullException(nameof(baseForms));
-            //_formingForms = formingForms ?? throw new System.ArgumentNullException(nameof(formingForms));
-            //_componentMatrix = componentMatrix ?? throw new System.ArgumentNullException(nameof(componentMatrix));
-            initial_b = _b ?? throw new System.ArgumentNullException(nameof(_b));
-            XStart = _XStart ?? throw new System.ArgumentNullException(nameof(_XStart));
-            inputK = _inputK ?? throw new System.ArgumentNullException(nameof(_inputK));
-            pointsCount = _pointsCount;
-            expPointsValues = _expPointsValues;
+            solutions = Solutions ?? throw new System.ArgumentNullException(nameof(solutions));
             DataContext = this;
-            List<double> xInitial = new List<double>();
-            List<double> b = new List<double>();
-            List<List<double>> Solutions = new List<List<double>>();
-            //List<List<double>> optimalSolutions = new List<List<double>>();
-            for (int i = 0; i < pointsCount; i++)
+            ShowResults();
+        }
+
+        private void ShowResults()
+        {
+            var sb = new StringBuilder();
+
+            for (int pointIndex = 0; pointIndex < solutions.Count; pointIndex++)
             {
-                xInitial = XStart[i];
-                double[] x_Initial = new double[5];
-                double[] K = new double[15];
-                double[] initial_b = new double[5];
-                b = xInitial;
-                for (int j = 0; j < x_Initial.Length; j++)
+                sb.AppendLine($"Результаты для точки {pointIndex + 1}:");
+                sb.AppendLine("----------------------------------");
+
+                var solution = solutions[pointIndex];
+                for (int i = 0; i < solution.Count; i++)
                 {
-                    x_Initial[j] = xInitial[j];
-                    initial_b[j] = b[j];
+                    sb.AppendLine($"x{i + 1} = {solution[i]:F6}"); // 6 знаков после запятой
                 }
-                for (int j = 0; j < inputK.Count; j++)
-                {
-                    K[j] = inputK[j];
-                }
-                //    //var solver = new PythonSolver();
-                //    //var solution = solver.Solve(xInitial, inputK, b);
-                //    //Solutions.Add(solution);
-                //    //List<double> optimalInputK = new List<double>(inputK);
-                //    //optimalInputK[12] = 28.973;
-                //    //optimalInputK[13] = 0;
-                //    //var newsolver = new PythonSolver();
-                //    //var optimalsolution = solver.Solve(xInitial, optimalInputK, b);
-                //    //optimalSolutions.Add(optimalsolution);
-                // Настройка оптимизации
-                minlmstate state;
-                minlmreport report;
-                alglib.minlmcreatev(
-                            5,             // Количество переменных
-                            5,             // Количество функций остатков
-                            x_Initial,
-                            1e-14,
-                            out state
-                        );
 
-                // 2. Исправление для minlmsetcond:
-                alglib.minlmsetcond(
-                    state,
-                    1e-14,          // Точность остатков (ftol)         // Точность параметров (xtol)
-                    0              // Максимальное число итераций (0 = по умолчанию)
-                );
-
-                var data = Tuple.Create(K, initial_b);
-                alglib.minlmoptimize(state, Residuals, null, data);
-
-                double[] optimizedParams;
-                alglib.minlmresults(state, out optimizedParams, out report);
-
-                tb_Results.Text += "Оптимальные параметры: \n";
-                tb_Results.Text += $" {string.Join(", ", optimizedParams.Select(v => v.ToString("F6")))}\n";
-
-                double[] residuals = new double[5];
-                Residuals(optimizedParams, residuals, data);
-                //tb_Results.Text += "\nОстатки:";
-                //tb_Results.Text += $"{string.Join(", ", residuals.Select(r => r.ToString("F6")))}\n\n";
-
-                var solver = new PythonSolver();
-                var solution = solver.Solve(xInitial, inputK, b);
-
-                Solutions.Add(solution);
-
+                sb.AppendLine();
+                sb.AppendLine();
             }
 
+            tb_Results.Text = sb.ToString();
         }
-
-        public static void Residuals(double[] x, double[] fi, object obj)
-        {
-            var data = (Tuple<double[], double[]>)obj;
-            double[] K = data.Item1;
-            double[] b = data.Item2;
-
-            double x1 = x[0], x2 = x[1], x3 = x[2], x4 = x[3], x5 = x[4];
-
-            //Уравнение 1
-            fi[0] = b[0] - (x1
-                + K[7] * x1 * x2
-                + K[12] * x1 * x2 * x2 * x2 * x4 * x4 * x4
-                + K[13] * x1 * x2 * x2 * x2 * x4 * x4 * x4 * x4);
-
-            // Уравнение 2
-            fi[1] = b[1] - (x2
-                + K[5] * x2 * x3
-                + K[6] * x2 * x5
-                + K[7] * x1 * x2
-                + K[8] * x2 * x4 * x4 * x5
-                + 3 * K[9] * x2 * x2 * x2 * x3 * x3 * x3 * x4
-                + K[10] * x2 * x3 * x4
-                + 2 * K[11] * x2 * x2 * x3 * x3 * x4
-                + 3 * K[12] * x1 * x2 * x2 * x2 * x4 * x4 * x4
-                + 3 * K[13] * x1 * x2 * x2 * x2 * x4 * x4 * x4 * x4);
-
-            // Уравнение 3
-            fi[2] = b[2] - (x3
-                + K[5] * x2 * x3
-                + 3 * K[9] * x2 * x2 * x2 * x3 * x3 * x3 * x4
-                + K[10] * x2 * x3 * x4
-                + 2 * K[11] * x2 * x2 * x3 * x3 * x4);
-
-            // Уравнение 4
-            fi[3] = b[3] - (x4
-                + 2 * K[8] * x2 * x4 * x4 * x5
-                + K[9] * x2 * x2 * x2 * x3 * x3 * x3 * x4
-                + K[10] * x2 * x3 * x4
-                + K[11] * x2 * x2 * x3 * x3 * x4
-                + 3 * K[12] * x1 * x2 * x2 * x2 * x4 * x4 * x4
-                + 4 * K[13] * x1 * x2 * x2 * x2 * x4 * x4 * x4 * x4
-                + 2 * K[14] * x4 * x4);
-
-            // Уравнение 5
-            fi[4] = b[4] - (x5
-                + K[6] * x2 * x5
-                + K[8] * x2 * x4 * x4 * x5);
-
-            ////Уравнение 1
-            //fi[0] = b[0] - (1
-            //    + K[7] * x2
-            //    + K[12] * x2 * x2 * x2 * x4 * x4 * x4
-            //    + K[13] * x2 * x2 * x2 * x4 * x4 * x4 * x4);
-
-            //// Уравнение 2
-            //fi[1] = b[1] - (1
-            //    + K[5] * x3
-            //    + K[7] * x1
-            //    + K[8] * x4 * x4 * x5
-            //    + 3 * K[9] * x2 * x2 * x3 * x3 * x3 * x4
-            //    + K[10] * x3 * x4
-            //    + 2 * K[11] * x2 * x3 * x3 * x4
-            //    + 3 * K[12] * x1 * x2 * x2 * x4 * x4 * x4
-            //    + 3 * K[13] * x1 * x2 * x2 * x4 * x4 * x4 * x4);
-
-            //// Уравнение 3
-            //fi[2] = b[2] - (1
-            //    + K[5] * x2
-            //    + K[9] * x2 * x2 * x2 * x3 * x3 * x4
-            //    + K[10] * x2 * x4
-            //    + 2 * K[11] * x2 * x2 * x3 * x4);
-
-            //// Уравнение 4
-            //fi[3] = b[3] - (1
-            //    + 2 * K[8] * x2 * x4 * x5
-            //    + K[9] * x2 * x2 * x2 * x3 * x3 * x3
-            //    + K[10] * x2 * x3
-            //    + K[11] * x2 * x2 * x3 * x3
-            //    + 3 * K[12] * x1 * x2 * x2 * x2 * x4 * x4
-            //    + 4 * K[13] * x1 * x2 * x2 * x2 * x4 * x4 * x4
-            //    + 2 * K[14] * x4);
-
-            //// Уравнение 5
-            //fi[4] = b[4] - (1
-            //    + K[8] * x2 * x4 * x4);
-        }
-
-        //private void ValidateData()
-        //{
-        //    if (_componentMatrix.Count != _formingForms.Count)
-        //        throw new ArgumentException("Количество строк в матрице не совпадает с количеством образующих форм");
-
-        //    if (_componentMatrix.Any(row => row.Count != _baseForms.Count))
-        //        throw new ArgumentException("Количество столбцов в матрице не совпадает с количеством базовых форм");
-        //}
-
-        //private void InitializeGridColumns()
-        //{
-        //    // Очищаем существующие колонки
-        //    dg_Component_Matrix.Columns.Clear();
-
-        //    // Первая колонка - названия образующих форм
-        //    dg_Component_Matrix.Columns.Add(new DataGridTextColumn
-        //    {
-        //        Header = "Образующиеся формы",
-        //        Binding = new Binding("FormingFormName"),
-        //        Width = new DataGridLength(2, DataGridLengthUnitType.Star)
-        //    });
-
-        //    // Колонки для базовых форм
-        //    foreach (var baseForm in _baseForms)
-        //    {
-        //        dg_Component_Matrix.Columns.Add(new DataGridTextColumn
-        //        {
-        //            Header = baseForm.Name,
-        //            Binding = new Binding($"Coefficients[{baseForm.Name}]"),
-        //            Width = new DataGridLength(1, DataGridLengthUnitType.Star)
-        //        });
-        //    }
-        //}
-
-        //private void PopulateRows()
-        //{
-        //    for (int i = 0; i < _formingForms.Count; i++)
-        //    {
-        //        var rowData = new MatrixRow
-        //        {
-        //            FormingFormName = _formingForms[i].Name,
-        //            Coefficients = new Dictionary<string, int>()
-        //        };
-
-        //        for (int j = 0; j < _baseForms.Count; j++)
-        //        {
-        //            rowData.Coefficients[_baseForms[j].Name!] = _componentMatrix[i][j];
-        //        }
-
-        //        Rows.Add(rowData);
-        //    }
-        //}
-
 
     }
+
+
+    //public static void Residuals(double[] x, double[] fi, object obj)
+    //{
+    //    var data = (ResidualData)obj;
+    //    for (int i = 0; i < fi.Length; i++)
+    //    {
+    //        double sum = x[i]; // Учет текущей переменной x_i
+    //        foreach (var term in data.TermsPerEquation![i])
+    //        {
+    //            double termValue = data.K![term.KIndex] * term.Coefficient;
+    //            foreach (var var in term.Variables!)
+    //                termValue *= Math.Pow(x[var.Key], var.Value);
+    //            sum += termValue;
+    //        }
+    //        fi[i] = data.B![i] - sum;
+    //    }
+    //}
     public class PythonSolver
     {
         public List<double> Solve(
@@ -312,10 +128,135 @@ namespace ASRS
             }
         }
     }
+    public class SystemBuilder
+    {
+        private List<ConcentrationSummary> concentrationsSum;
+        private List<ConcentrationConstant> concentrationConstants;
+        private List<Reaction> reactions;
+        private List<BaseForm> baseForms;
+        private List<FormingForm> formingForms;
+
+        public SystemBuilder(
+            List<ConcentrationSummary> concentrationsSum,
+            List<ConcentrationConstant> concentrationConstants,
+            List<Reaction> reactions,
+            List<BaseForm> baseForms,
+            List<FormingForm> formingForms
+        )
+        {
+            this.concentrationsSum = concentrationsSum;
+            this.concentrationConstants = concentrationConstants;
+            this.reactions = reactions;
+            this.baseForms = baseForms;
+            this.formingForms = formingForms;
+        }
+
+        public Dictionary<int, Dictionary<string, EquationData>> BuildEquations()
+        {
+            var results = new Dictionary<int, Dictionary<string, EquationData>>();
+            var reactionList = reactions.ToList(); // Для определения индексов реакций
+
+            foreach (var point in concentrationsSum.Select(c => c.PointId).Distinct())
+            {
+                var pointData = concentrationsSum
+                    .Where(c => c.PointId == point)
+                    .ToDictionary(c => c.FormName!, c => c.TotalConcentration);
+
+                var equations = new Dictionary<string, EquationData>();
+
+                foreach (var form in baseForms)
+                {
+                    var formName = form.Name!;
+                    if (!pointData.TryGetValue(formName, out var b))
+                        throw new InvalidOperationException($"Концентрация для {formName} не найдена.");
+
+                    var terms = new List<Term>();
+                    foreach (var reaction in reactionList)
+                    {
+                        var coeff = GetFormCoefficient(reaction, formName);
+                        if (coeff == null || coeff == 0) continue;
+
+                        var term = new Term
+                        {
+                            KIndex = reactionList.IndexOf(reaction),
+                            Coefficient = coeff.Value,
+                            Variables = new Dictionary<int, int>()
+                        };
+
+                        foreach (var component in GetReactionComponents(reaction))
+                        {
+                            if (component.Coeff <= 0 || string.IsNullOrEmpty(component.Name)) continue;
+                            var varIndex = baseForms.FindIndex(f => f.Name == component.Name);
+                            if (varIndex == -1) continue;
+                            term.Variables[varIndex] = component.Coeff;
+                        }
+
+                        terms.Add(term);
+                    }
+
+                    equations.Add(formName, new EquationData { B = b, Terms = terms });
+                }
+
+                results.Add(point, equations);
+            }
+
+            return results;
+        }
+
+        // Вспомогательные методы
+        private int? GetFormCoefficient(Reaction reaction, string formName)
+        {
+            if (reaction.Inp1 == formName) return reaction.KInp1;
+            if (reaction.Inp2 == formName) return reaction.KInp2;
+            if (reaction.Inp3 == formName) return reaction.KInp3;
+            return null;
+        }
+
+        private IEnumerable<(string Name, int Coeff)> GetReactionComponents(Reaction reaction)
+        {
+            yield return (reaction.Inp1!, reaction.KInp1 ?? 0);
+            yield return (reaction.Inp2!, reaction.KInp2 ?? 0);
+            yield return (reaction.Inp3!, reaction.KInp3 ?? 0);
+        }
+    }
 
     public class MatrixRow
     {
         public string? FormingFormName { get; set; }
         public Dictionary<string, int>? Coefficients { get; set; }
+    }
+
+    public class Term
+    {
+        public int KIndex { get; set; }
+        public double Coefficient { get; set; }
+        public Dictionary<int, int>? Variables { get; set; } // Индекс переменной -> степень
+    }
+
+    public class EquationData
+    {
+        public double B { get; set; }
+        public List<Term>? Terms { get; set; }
+    }
+
+    public class ResidualData
+    {
+        public double[]? K { get; set; }
+        public double[]? B { get; set; }
+        public List<Term>[]? TermsPerEquation { get; set; }
+    }
+
+    public class ConcentrationSummary
+    {
+        public int PointId { get; set; }
+        public string? FormName { get; set; }
+        public double TotalConcentration { get; set; }
+    }
+
+    public class CalculationResult
+    {
+        public int PointId { get; set; }
+        public string? FormName { get; set; }
+        public double CalculatedValue { get; set; }
     }
 }

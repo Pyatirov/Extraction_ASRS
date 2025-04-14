@@ -551,69 +551,6 @@ namespace ASRS
             return orderedItems!;
         }
 
-        private List<CalculationResult> InitialConcentrationsFromZDM(List<ConcentrationSummary> concentrationsSum, List<ConcentrationConstant> concentrationConstants,
-    List<FormingForm> formingForms, List<Reaction> reactions)
-        {
-            var results = new List<CalculationResult>();
-
-            // Обрабатываем дубликаты FormName: группируем и суммируем TotalConcentration
-            var concentrationDict = concentrationsSum
-                .GroupBy(c => c.PointId)
-                .ToDictionary(
-                    g => g.Key, // Ключ словаря - PointId
-                    g => g.GroupBy(c => c.FormName!) // Группировка по FormName внутри каждого PointId
-                          .ToDictionary(
-                              group => group.Key, // Ключ внутреннего словаря - FormName
-                              group => group.Sum(c => c.TotalConcentration) // Суммируем дубликаты
-                          )
-                );
-
-            // Обрабатываем возможные дубликаты в константах (берем первое значение)
-            var constantsDict = concentrationConstants
-                .GroupBy(cc => cc.FormName!)
-                .ToDictionary(g => g.Key, g => g.First().Value);
-
-            // Перебираем точки из словаря (оптимизация вместо Distinct)
-            foreach (var point in concentrationDict.Keys)
-            {
-                var pointConcentrations = concentrationDict[point];
-
-                foreach (var form in formingForms)
-                {
-                    if (!constantsDict.TryGetValue(form.Name!, out var constant)) continue;
-
-                    // Находим реакцию, образующую эту форму
-                    var reaction = reactions.FirstOrDefault(r => r.Prod == form.Name);
-                    if (reaction == null) continue;
-
-                    // Собираем компоненты с коэффициентами
-                    var componentsWithCoeffs = new List<(string Component, int Coefficient)>
-                    {
-                        (form.Component1!, reaction.KInp1 ?? 0),
-                        (form.Component2!, reaction.KInp2 ?? 0),
-                        (form.Component3!, reaction.KInp3 ?? 0)
-                    }
-                    .Where(x => !string.IsNullOrEmpty(x.Component));
-
-                    // Вычисляем произведение концентраций
-                    double product = constant;
-                    foreach (var (component, coeff) in componentsWithCoeffs)
-                    {
-                        if (pointConcentrations.TryGetValue(component, out var conc))
-                            product *= Math.Pow(conc, coeff);
-                    }
-
-                    results.Add(new CalculationResult
-                    {
-                        PointId = point,
-                        FormName = form.Name,
-                        CalculatedValue = product
-                    });
-                }
-            }
-            return results;
-        }
-
         private async Task<List<ConcentrationConstant>> GetConstantsForMechanismAsync(Mechanisms selectedMechanism, int ConstantsCount)
         {
             using (var context = new ApplicationContext())
@@ -709,9 +646,9 @@ namespace ASRS
 
         }
 
-        public List<ConcentrationConstant> GetUserInputConstants()
+        public List<double> GetUserInputConstants()
         {
-            var constants = new List<ConcentrationConstant>();
+            var constants = new List<double>();
 
             foreach (var child in ug_Constants_Inputs_Panel.Children)
             {
@@ -725,11 +662,7 @@ namespace ASRS
                         // Парсим значение и создаем объект константы
                         if (double.TryParse(textBox.Text, out double value))
                         {
-                            constants.Add(new ConcentrationConstant
-                            {
-                                FormName = textBox.Tag.ToString(),
-                                Value = value
-                            });
+                            constants.Add(value);
                         }
                         else
                         {
@@ -745,43 +678,14 @@ namespace ASRS
 
         private async void Calculation(Mechanisms selectedMechanism)
         {
-            List<double> Constants = new List<double>();
-
-            Constants.Clear();
-
-            Constants.AddRange(new List<double> { 1, 1, 1, 1, 1 });
-
-            foreach (var child in ug_Constants_Inputs_Panel.Children)
-            {
-                if (child is Grid grid)
-                {
-                    // Ищем все TextBox'ы внутри Grid, включая вложенные контейнеры
-                    var textBoxes = grid.Children.OfType<TextBox>();
-
-                    foreach (var textBox in textBoxes)
-                    {
-                        if (double.TryParse(textBox.Text, out double value))
-                        {
-                            Constants.Add(value);
-                        }
-                    }
-                }
-            }
-
-            //LoadConstantsToDataBaseAsync(formingForms, Constants, selectedMechanism);
-
-
             var concentrationsSum = await GetConcentrationSumsPerPoint();
-
-            //var concentrationConstants = await GetConstantsForMechanismAsync(selectedMechanism, Constants.Count);
-
-            //concentrationConstants.Reverse();
 
             var concentrationConstants = GetUserInputConstants();
 
             List<Reaction> reactions = new List<Reaction>();
             List<BaseForm> baseForms = new List<BaseForm>();
             List<FormingForm> formingForms = new List<FormingForm>();
+            List<List<double>> Solutions = new List<List<double>>();
 
             using (var context = new ApplicationContext())
             {
@@ -789,41 +693,6 @@ namespace ASRS
                 baseForms = await GetBaseFormsFromReactionsAsync(context, reactions);
                 formingForms = await GetFormingFormsFromReactionsAsync(context, reactions);
             }
-
-            List<CalculationResult> initalConcentrations = InitialConcentrationsFromZDM(concentrationsSum, concentrationConstants, formingForms, reactions);
-
-            var builder = new SystemBuilder(
-                                concentrationsSum,
-                                concentrationConstants,
-                                reactions,
-                                baseForms,
-                                formingForms
-                                  );
-            var system = builder.BuildEquations();
-
-            List<List<double>> b = new List<List<double>>();
-
-            List<double> concentrat = new List<double>();
-            foreach (var conc in concentrationsSum)
-            {
-                concentrat.Add(conc.TotalConcentration);
-            }
-
-            for (int i = 0; i < concentrat.Count; i += 5)
-            {
-                var original = concentrat.GetRange(i, 5);
-                var reordered = new List<double>
-                {
-                    original[1],  // Первый элемент нового списка
-                    original[3],  // Второй элемент
-                    original[0],  // Третий элемент
-                    original[4],  // Четвертый элемент
-                    original[2]   // Пятый элемент
-                };
-                b.Add(reordered);
-            }
-
-            List<List<double>> XStart = b;
 
             var expPoints = await GetAllExperimentalPoints();
 
@@ -854,23 +723,52 @@ namespace ASRS
                 }
             }
 
-            // Перестановка элементов в каждом вложенном списке
-            for (int i = 0; i < expPointsValues.Count; i++)
+            var builder = new SystemBuilder(
+                                concentrationsSum,
+                                reactions,
+                                baseForms,
+                                formingForms
+                                  );
+            var system = builder.BuildEquations();
+
+            foreach (var point in system.Keys)
             {
-                List<double> original = expPointsValues[i]; // [[2]]
+                var pointData = system[point];
+                // 1. Определите порядок переменных (например, порядок форм в baseForms)
+                var variableOrder = baseForms.Select(f => f.Name).ToList();
 
-                expPointsValues[i] = new List<double>
+                // 2. Получите значения концентраций в правильном порядке
+                double[] xInitial = variableOrder
+                    .Select(formName =>
+                    {
+                        if (pointData.TryGetValue(formName!, out var equationData))
+                            return equationData.B; // Используем исходную концентрацию как начальное приближение
+                        else
+                            throw new InvalidOperationException($"Нет данных для формы {formName} в точке {point}");
+                    })
+                    .ToArray();
+
+                // 3. Создание ResidualData с корректными терминами
+                var residualData = new ResidualData
                 {
-                    original[2], original[3], // Пара 2-3
-                    original[6], original[7], // Пара 6-7
-                    original[0], original[1], // Пара 0-1
-                    original[8], original[9], // Пара 8-9
-                    original[4], original[5]  // Пара 4-5
+                    K = concentrationConstants.Select(c => c).ToArray(),
+                    B = variableOrder.Select(formName => pointData[formName!].B).ToArray(),
+                    TermsPerEquation = variableOrder
+                        .Select(formName => pointData[formName!].Terms!)
+                        .ToArray()
                 };
-            }
-            var pointsCount = await GetPointsCountPerMechanismAsync(selectedMechanism);
 
-            CalculationResults calculationResults = new CalculationResults(b, XStart, Constants, pointsCount, expPointsValues);
+                alglib.minlmstate state;
+                alglib.minlmreport report;
+                alglib.minlmcreatev(xInitial.Length, xInitial.Length, xInitial, 1e-6, out state);
+                alglib.minlmsetcond(state, 1e-6, 0);
+                alglib.minlmoptimize(state, Residuals, null, residualData);
+                alglib.minlmresults(state, out double[] solution, out report);
+
+                Solutions.Add(solution.ToList());
+            }
+
+            CalculationResults calculationResults = new CalculationResults(Solutions);
             calculationResults.Show();
 
         }
@@ -888,7 +786,7 @@ namespace ASRS
                 e.Handled = true;
         }
 
-        public async Task<List<ConcentrationSummary>> GetConcentrationSumsPerPoint()
+        public static async Task<List<ConcentrationSummary>> GetConcentrationSumsPerPoint()
         {
             using (var context = new ApplicationContext())
             {
@@ -927,82 +825,76 @@ namespace ASRS
         public class SystemBuilder
         {
             private List<ConcentrationSummary> concentrationsSum;
-            private List<ConcentrationConstant> concentrationConstants;
             private List<Reaction> reactions;
             private List<BaseForm> baseForms;
             private List<FormingForm> formingForms;
 
             public SystemBuilder(
                 List<ConcentrationSummary> concentrationsSum,
-                List<ConcentrationConstant> concentrationConstants,
                 List<Reaction> reactions,
                 List<BaseForm> baseForms,
                 List<FormingForm> formingForms
             )
             {
                 this.concentrationsSum = concentrationsSum;
-                this.concentrationConstants = concentrationConstants;
                 this.reactions = reactions;
                 this.baseForms = baseForms;
                 this.formingForms = formingForms;
             }
 
-            public Dictionary<int, Dictionary<string, double>> BuildEquations()
+            public Dictionary<int, Dictionary<string, EquationData>> BuildEquations()
             {
-                var results = new Dictionary<int, Dictionary<string, double>>();
-                var constantsDict = concentrationConstants.ToDictionary(cc => cc.FormName!, cc => cc.Value);
+                var results = new Dictionary<int, Dictionary<string, EquationData>>();
+                var reactionList = reactions.ToList(); // Для определения индексов реакций
 
                 foreach (var point in concentrationsSum.Select(c => c.PointId).Distinct())
                 {
-                    var pointConcentrations = concentrationsSum
+                    var pointData = concentrationsSum
                         .Where(c => c.PointId == point)
                         .ToDictionary(c => c.FormName!, c => c.TotalConcentration);
 
-                    var calculatedValues = new Dictionary<string, double>();
+                    var equations = new Dictionary<string, EquationData>();
 
-                    foreach (var baseForm in baseForms)
+                    foreach (var form in baseForms)
                     {
-                        var formName = baseForm.Name!;
+                        var formName = form.Name!;
+                        if (!pointData.TryGetValue(formName, out var b))
+                            throw new InvalidOperationException($"Концентрация для {formName} не найдена.");
 
-                        // Исходная концентрация (b из уравнения)
-                        if (!pointConcentrations.TryGetValue(formName, out double baseConcentration))
-                            throw new InvalidOperationException($"Базовая концентрация для {formName} не найдена в точке {point}");
-
-                        double totalReactionContributions = 0;
-
-                        foreach (var reaction in reactions)
+                        var terms = new List<Term>();
+                        foreach (var reaction in reactionList)
                         {
-                            // Определение коэффициента участия формы в реакции
-                            int? formCoefficient = GetFormCoefficient(reaction, formName);
-                            if (formCoefficient == null || formCoefficient == 0) continue;
+                            var coeff = GetFormCoefficient(reaction, formName);
+                            if (coeff == null || coeff == 0) continue;
 
-                            // Получение константы реакции
-                            if (!constantsDict.TryGetValue(reaction.Prod!, out double k)) continue;
+                            var term = new Term
+                            {
+                                KIndex = reactionList.IndexOf(reaction),
+                                Coefficient = coeff.Value,
+                                Variables = new Dictionary<int, int>()
+                            };
 
-                            // Расчет вклада реакции
-                            double reactionContribution = k * formCoefficient.Value;
                             foreach (var component in GetReactionComponents(reaction))
                             {
                                 if (component.Coeff <= 0 || string.IsNullOrEmpty(component.Name)) continue;
-
-                                if (!pointConcentrations.TryGetValue(component.Name, out double conc))
-                                    throw new InvalidOperationException($"Отсутствует концентрация {component.Name} в точке {point}");
-
-                                reactionContribution *= Math.Pow(conc, component.Coeff);
+                                var varIndex = baseForms.FindIndex(f => f.Name == component.Name);
+                                if (varIndex == -1) continue;
+                                term.Variables[varIndex] = component.Coeff;
                             }
 
-                            totalReactionContributions += reactionContribution;
+                            terms.Add(term);
                         }
 
-                        // Вычитаем сумму вкладов из исходной концентрации
-                        calculatedValues.Add(formName, baseConcentration - totalReactionContributions);
+                        equations.Add(formName, new EquationData { B = b, Terms = terms });
                     }
 
-                    results.Add(point, calculatedValues);
+                    results.Add(point, equations);
                 }
 
                 return results;
             }
+
+
 
             // Вспомогательные методы
             private int? GetFormCoefficient(Reaction reaction, string formName)
@@ -1018,6 +910,23 @@ namespace ASRS
                 yield return (reaction.Inp1!, reaction.KInp1 ?? 0);
                 yield return (reaction.Inp2!, reaction.KInp2 ?? 0);
                 yield return (reaction.Inp3!, reaction.KInp3 ?? 0);
+            }
+        }
+
+        public static void Residuals(double[] x, double[] fi, object obj)
+        {
+            var data = (ResidualData)obj;
+            for (int i = 0; i < fi.Length; i++)
+            {
+                double sum = x[i]; // Учет текущей переменной x_i
+                foreach (var term in data.TermsPerEquation![i])
+                {
+                    double termValue = data.K![term.KIndex] * term.Coefficient;
+                    foreach (var var in term.Variables!)
+                        termValue *= Math.Pow(x[var.Key], var.Value);
+                    sum += termValue;
+                }
+                fi[i] = data.B![i] - sum;
             }
         }
 
