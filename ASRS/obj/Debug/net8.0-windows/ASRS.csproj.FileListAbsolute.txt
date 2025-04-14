@@ -78,3 +78,5 @@ D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\ASRS.genruntimeconfig.cache
 D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\ref\ASRS.dll
 D:\Projects\ASRS\ASRS\bin\Debug\net8.0-windows\alglib.net.dll
 D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\ASRS.sourcelink.json
+D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\Researcher\ComponentMatrix.g.cs
+D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\Researcher\ComponentMatrix.baml
