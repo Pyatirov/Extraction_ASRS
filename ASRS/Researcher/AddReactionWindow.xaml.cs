@@ -54,6 +54,7 @@ namespace ASRS
                     KInp2 = int.Parse(txtKInp2.Text),
                     KInp3 = int.Parse(txtKInp3.Text),
                     KProd = int.Parse(txtKProd.Text),
+                    Phase = rbAqueous.IsChecked == true ? 1 : 0
                 };
 
                 context.Reactions.Add(newReaction);

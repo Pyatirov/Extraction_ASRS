@@ -14,6 +14,7 @@ namespace ASRS.Database
         [Key]
         public int ID { get; set; }
         public string? Name { get; set; }
+        public int Phase { get; set; }
     }
 
     public class FormingForm
@@ -79,6 +80,7 @@ namespace ASRS.Database
         public int? KInp2 { get; set; }
         public int? KInp3 { get; set; }
         public int? KProd { get; set; }
+        public int Phase { get; set; }
     }
 
     public class ReactionMechanism
