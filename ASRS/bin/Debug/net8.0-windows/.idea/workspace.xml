@@ -1,16 +1,44 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="efdae19f-698d-4aa8-a5e4-0a4fcf3d221a" name="Changes" comment="" />
+    <list default="true" id="efdae19f-698d-4aa8-a5e4-0a4fcf3d221a" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../../.vs/ASRS/FileContentIndex/0c99e4c0-cf64-4dab-a1f1-93c0a8af1338.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.vs/ASRS/FileContentIndex/61c7d75c-e0c4-4dbf-9ebb-2aa28893b82b.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.vs/ASRS/FileContentIndex/b46c72a6-7376-4aa8-85e8-ddc114663fca.vsidx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/.futdcache.v2" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/.futdcache.v2" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/.suo" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/.suo" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/DocumentLayout.backup.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/DocumentLayout.backup.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/DocumentLayout.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../../.vs/ASRS/v17/DocumentLayout.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASRS.dll" beforeDir="false" afterPath="$PROJECT_DIR$/ASRS.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASRS.exe" beforeDir="false" afterPath="$PROJECT_DIR$/ASRS.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ASRS.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/ASRS.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/compmodeling.db" beforeDir="false" afterPath="$PROJECT_DIR$/compmodeling.db" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.AssemblyInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.AssemblyInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.AssemblyInfoInputs.cache" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.AssemblyInfoInputs.cache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.g.resources" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.g.resources" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.pdb" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.pdb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.sourcelink.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ASRS.sourcelink.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/Researcher/AddReactionWindow.baml" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/Researcher/AddReactionWindow.baml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/Researcher/AddReactionWindow.g.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/Researcher/AddReactionWindow.g.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/Researcher/AddReactionWindow.g.i.cs" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/Researcher/AddReactionWindow.g.i.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/apphost.exe" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/apphost.exe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ref/ASRS.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/ref/ASRS.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/refint/ASRS.dll" beforeDir="false" afterPath="$PROJECT_DIR$/../../../obj/Debug/net8.0-windows/refint/ASRS.dll" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../../.." />
+  </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2vVQWYsEKk6XUT7MdFL7s3PlZAL" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
@@ -25,5 +53,16 @@
       <updated>1744227793937</updated>
     </task>
     <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>
