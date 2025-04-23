@@ -760,8 +760,8 @@ namespace ASRS
 
                 alglib.minlmstate state;
                 alglib.minlmreport report;
-                alglib.minlmcreatev(xInitial.Length, xInitial.Length, xInitial, 1e-6, out state);
-                alglib.minlmsetcond(state, 1e-6, 0);
+                alglib.minlmcreatev(xInitial.Length, xInitial.Length, xInitial, 1e-8, out state);
+                alglib.minlmsetcond(state, 1e-8, 10000);
                 alglib.minlmoptimize(state, Residuals, null, residualData);
                 alglib.minlmresults(state, out double[] solution, out report);
 
