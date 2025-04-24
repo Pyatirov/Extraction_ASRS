@@ -744,6 +744,8 @@ namespace ASRS
                                   );
             var system = builder.BuildEquations();
 
+            var pointsData = new List<PointData>();
+
             foreach (var point in system.Keys)
             {
                 var pointData = system[point];
@@ -777,9 +779,15 @@ namespace ASRS
                 alglib.minlmsetcond(state, 1e-8, 10000);
                 alglib.minlmoptimize(state, Residuals, null, residualData);
                 alglib.minlmresults(state, out double[] solution, out report);
+                pointsData.Add(new PointData
+                {
+                    Solution = solution,
+                    ResidualData = residualData,
+                    PointId = point
+                });
 
-                var equationsForPoint = Solutions[point]; // equationsDictionary — результат BuildEquations()
-                var phaseFormTotals = new Dictionary<string, Dictionary<string, double>>();
+                //var equationsForPoint = Solutions[point]; // equationsDictionary — результат BuildEquations()
+                //var phaseFormTotals = new Dictionary<string, Dictionary<string, double>>();
 
                 //foreach (var formEntry in equationsForPoint)
                 //{
@@ -805,11 +813,11 @@ namespace ASRS
                 //}
 
                 //// Сохраняем результаты для текущей точки:
-                //Solutions.Add(solution.ToList());
+                Solutions.Add(solution.ToList());
                 //PhaseFormTotals.Add(phaseFormTotals);
             }
 
-            CalculationResults calculationResults = new CalculationResults(Solutions);
+            CalculationResults calculationResults = new CalculationResults(pointsData, baseForms);
             calculationResults.Show();
 
         }
@@ -897,6 +905,13 @@ namespace ASRS
             }
         }
 
+        public class PointData
+        {
+            public int PointId { get; set; }
+            public double[]? Solution { get; set; }
+            public ResidualData? ResidualData { get; set; }
+        }
+
         public class SystemBuilder
         {
             private List<ConcentrationSummary> concentrationsSum;
@@ -946,7 +961,8 @@ namespace ASRS
                             {
                                 KIndex = reactionList.IndexOf(reaction),
                                 Coefficient = coeff.Value,
-                                Variables = new Dictionary<int, int>()
+                                Variables = new Dictionary<int, int>(),
+                                Phase = reaction.Phase
                             };
 
                             foreach (var component in GetReactionComponents(reaction))

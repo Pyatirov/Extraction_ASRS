@@ -16,13 +16,15 @@ namespace ASRS
     public partial class CalculationResults : Window
     {
         public ObservableCollection<MatrixRow> Rows { get; } = new ObservableCollection<MatrixRow>();
-        private List<List<double>> solutions;
+        //private List<List<double>> solutions;
+        private readonly List<PointData> _pointsData;
+        private readonly List<BaseForm> _baseForms;
 
-        public CalculationResults(List<List<double>> Solutions)
+        public CalculationResults(List<PointData> pointsData, List<BaseForm> baseForms)
         {
             InitializeComponent();
-            solutions = Solutions ?? throw new System.ArgumentNullException(nameof(solutions));
-            DataContext = this;
+            _pointsData = pointsData;
+            _baseForms = baseForms;
             ShowResults();
         }
 
@@ -30,23 +32,121 @@ namespace ASRS
         {
             var sb = new StringBuilder();
 
-            for (int pointIndex = 0; pointIndex < solutions.Count; pointIndex++)
+            foreach (var pointData in _pointsData)
             {
-                sb.AppendLine($"Результаты для точки {pointIndex + 1}:");
+                sb.AppendLine($"Точка {pointData.PointId}:");
                 sb.AppendLine("----------------------------------");
 
-                var solution = solutions[pointIndex];
-                for (int i = 0; i < solution.Count; i++)
+                // Получаем все формы
+                var forms = _baseForms.Select(f => f.Name).Distinct().ToList();
+
+                // Для каждой формы считаем концентрации в обеих фазах
+                foreach (var formName in forms)
                 {
-                    sb.AppendLine($"x{i + 1} = {solution[i]:F6}"); // 6 знаков после запятой
+                    var form = _baseForms.First(f => f.Name == formName);
+
+                    // Концентрация в водной фазе
+                    double aqueous = CalculatePhaseConcentration(formName!, 1, pointData);
+
+                    // Концентрация в органической фазе
+                    double organic = CalculatePhaseConcentration(formName!, 0, pointData);
+
+                    sb.AppendLine($"{formName}:");
+                    sb.AppendLine($"  Водная фаза: {aqueous:F4}");
+                    sb.AppendLine($"  Органическая фаза: {organic:F4}");
+                    sb.AppendLine();
                 }
 
-                sb.AppendLine();
-                sb.AppendLine();
+                sb.AppendLine("\n\n");
             }
 
             tb_Results.Text = sb.ToString();
         }
+
+
+        private double CalculatePhaseConcentration(string formName, int targetPhase, PointData pointData)
+        {
+            double total = 0;
+
+            // Находим индекс формы в списке переменных
+            int formIndex = _baseForms.FindIndex(f => f.Name == formName);
+
+            // Свободная форма (если она в целевой фазе)
+            if (_baseForms[formIndex].Phase == targetPhase)
+            {
+                total += pointData.Solution![formIndex];
+            }
+
+            // Перебираем все уравнения для поиска связанных термов
+            foreach (var equation in pointData.ResidualData!.TermsPerEquation!)
+            {
+                foreach (var term in equation)
+                {
+                    // Проверяем содержит ли терм целевую форму и фазу
+                    if (term.Variables!.ContainsKey(formIndex) && term.Phase == targetPhase)
+                    {
+                        // Вычисляем значение терма
+                        double termValue = term.Coefficient * pointData.ResidualData.K![term.KIndex];
+
+                        foreach (var varEntry in term.Variables)
+                        {
+                            int varIdx = varEntry.Key;
+                            int power = varEntry.Value;
+                            termValue *= Math.Pow(pointData.Solution![varIdx], power);
+                        }
+
+                        // Учитываем вклад терма в целевую форму
+                        total += termValue * GetFormContribution(term.Variables, formIndex);
+                    }
+                }
+            }
+
+            return total;
+        }
+
+        // 4. Вспомогательный метод для определения вклада в конкретную форму
+        private double GetFormContribution(Dictionary<int, int> variables, int targetFormIndex)
+        {
+            if (!variables.ContainsKey(targetFormIndex)) return 0;
+
+            // Коэффициент при целевой форме
+            return variables[targetFormIndex] / (double)variables.Values.Sum();
+        }
+        private double CalculateFormConcentration(BaseForm form, PointData pointData)
+        {
+            double total = 0;
+            var variableOrder = _baseForms.Select(f => f.Name).ToList();
+            int formIndex = variableOrder.IndexOf(form.Name);
+
+            // Получаем уравнение для текущей формы
+            var equationTerms = pointData.ResidualData!.TermsPerEquation![formIndex];
+
+            // Суммируем Terms соответствующей фазы
+            foreach (var term in equationTerms)
+            {
+                if (term.Phase == form.Phase)
+                {
+                    double termValue = term.Coefficient * pointData.ResidualData.K![term.KIndex];
+
+                    foreach (var varEntry in term.Variables!)
+                    {
+                        int varIndex = varEntry.Key;
+                        int power = varEntry.Value;
+                        termValue *= Math.Pow(pointData.Solution![varIndex], power);
+                    }
+
+                    total += termValue;
+                }
+            }
+
+            // Добавляем исходную концентрацию
+            total += pointData.ResidualData.B![formIndex];
+
+            return total;
+        }
+
+        private string GetPhaseName(int phase) => phase == 1 ? "Водная" : "Органическая";
+ 
 
         private double CalculateTermValue(Term term, double[] solution, double[] K)
         {
@@ -102,6 +202,13 @@ namespace ASRS
     //        fi[i] = data.B![i] - sum;
     //    }
     //}
+
+    public class FormConcentrationResult
+    {
+        public string? FormName { get; set; }
+        public double AqueousConcentration { get; set; }
+        public double OrganicConcentration { get; set; }
+    }
     public class PythonSolver
     {
         public List<double> Solve(
@@ -215,7 +322,8 @@ namespace ASRS
                         {
                             KIndex = reactionList.IndexOf(reaction),
                             Coefficient = coeff.Value,
-                            Variables = new Dictionary<int, int>()
+                            Variables = new Dictionary<int, int>(),
+                            Phase = reaction.Phase
                         };
 
                         foreach (var component in GetReactionComponents(reaction))
@@ -266,6 +374,7 @@ namespace ASRS
         public int KIndex { get; set; }
         public double Coefficient { get; set; }
         public Dictionary<int, int>? Variables { get; set; } // Индекс переменной -> степень
+        public int Phase { get; set; }
     }
 
     public class EquationData
