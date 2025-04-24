@@ -3,20 +3,20 @@
   "WorkspaceRootPath": "D:\\Projects\\ASRS\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\addreactionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\addreactionwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\researcher.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\researcher.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\addreactionwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\addreactionwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\calculationresults.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\calculationresults.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\researcher.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\researcher.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\database\\dbtables.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\database\\dbtables.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\researcher.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\researcher.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\componentmatrix.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
@@ -27,16 +27,8 @@
       "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\componentmatrix.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\calculationresults.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\calculationresults.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
       "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\calculationresults.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
       "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\calculationresults.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|d:\\projects\\asrs\\asrs\\researcher\\researcher.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{D03C778A-A4A6-4A06-AB62-39F80F257999}|ASRS\\ASRS.csproj|solutionrelative:asrs\\researcher\\researcher.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -46,68 +38,42 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": 1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "AddReactionWindow.xaml",
-              "DocumentMoniker": "D:\\Projects\\ASRS\\ASRS\\Researcher\\AddReactionWindow.xaml",
-              "RelativeDocumentMoniker": "ASRS\\Researcher\\AddReactionWindow.xaml",
-              "ToolTip": "D:\\Projects\\ASRS\\ASRS\\Researcher\\AddReactionWindow.xaml",
-              "RelativeToolTip": "ASRS\\Researcher\\AddReactionWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-23T20:10:35.738Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "AddReactionWindow.xaml.cs",
-              "DocumentMoniker": "D:\\Projects\\ASRS\\ASRS\\Researcher\\AddReactionWindow.xaml.cs",
-              "RelativeDocumentMoniker": "ASRS\\Researcher\\AddReactionWindow.xaml.cs",
-              "ToolTip": "D:\\Projects\\ASRS\\ASRS\\Researcher\\AddReactionWindow.xaml.cs",
-              "RelativeToolTip": "ASRS\\Researcher\\AddReactionWindow.xaml.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAAADgAAAA/AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T20:10:24.448Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 3,
               "Title": "DBTables.cs",
               "DocumentMoniker": "D:\\Projects\\ASRS\\ASRS\\Database\\DBTables.cs",
               "RelativeDocumentMoniker": "ASRS\\Database\\DBTables.cs",
               "ToolTip": "D:\\Projects\\ASRS\\ASRS\\Database\\DBTables.cs",
               "RelativeToolTip": "ASRS\\Database\\DBTables.cs",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAswFAAAAAnAAAAAAAAAA==",
+              "ViewState": "AgIAAFMAAAAAAAAAAAAcwFAAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-23T20:09:27.763Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-23T20:09:27.763Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
+              "DocumentIndex": 1,
               "Title": "CalculationResults.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\ASRS\\ASRS\\Researcher\\CalculationResults.xaml.cs",
               "RelativeDocumentMoniker": "ASRS\\Researcher\\CalculationResults.xaml.cs",
               "ToolTip": "D:\\Projects\\ASRS\\ASRS\\Researcher\\CalculationResults.xaml.cs",
               "RelativeToolTip": "ASRS\\Researcher\\CalculationResults.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADAAAAAJAAAAAAAAAA==",
+              "ViewState": "AgIAACUAAAAAAAAAAAAawEYAAAALAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-10T20:49:28.661Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 0,
               "Title": "Researcher.xaml.cs",
               "DocumentMoniker": "D:\\Projects\\ASRS\\ASRS\\Researcher\\Researcher.xaml.cs",
               "RelativeDocumentMoniker": "ASRS\\Researcher\\Researcher.xaml.cs",
               "ToolTip": "D:\\Projects\\ASRS\\ASRS\\Researcher\\Researcher.xaml.cs",
               "RelativeToolTip": "ASRS\\Researcher\\Researcher.xaml.cs",
-              "ViewState": "AgIAAOoCAAAAAAAAAAAiwPsCAAAzAAAAAAAAAA==",
+              "ViewState": "AgIAAL4CAAAAAAAAAAAEwLkCAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2025-04-10T20:38:47.508Z",
               "EditorCaption": ""
@@ -122,8 +88,7 @@
               "RelativeToolTip": "ASRS\\Researcher\\ComponentMatrix.xaml.cs",
               "ViewState": "AgIAAAIAAAAAAAAAAAAiwF8AAAAJAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2025-04-13T16:59:03.605Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-13T16:59:03.605Z"
             },
             {
               "$type": "Document",
@@ -134,12 +99,11 @@
               "ToolTip": "D:\\Projects\\ASRS\\ASRS\\Researcher\\ComponentMatrix.xaml",
               "RelativeToolTip": "ASRS\\Researcher\\ComponentMatrix.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-13T16:58:13.753Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-04-13T16:58:13.753Z"
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 6,
               "Title": "CalculationResults.xaml",
               "DocumentMoniker": "D:\\Projects\\ASRS\\ASRS\\Researcher\\CalculationResults.xaml",
               "RelativeDocumentMoniker": "ASRS\\Researcher\\CalculationResults.xaml",
@@ -150,14 +114,15 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 2,
               "Title": "Researcher.xaml",
               "DocumentMoniker": "D:\\Projects\\ASRS\\ASRS\\Researcher\\Researcher.xaml",
               "RelativeDocumentMoniker": "ASRS\\Researcher\\Researcher.xaml",
               "ToolTip": "D:\\Projects\\ASRS\\ASRS\\Researcher\\Researcher.xaml",
               "RelativeToolTip": "ASRS\\Researcher\\Researcher.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2025-04-10T20:38:26.909Z"
+              "WhenOpened": "2025-04-10T20:38:26.909Z",
+              "EditorCaption": ""
             }
           ]
         }

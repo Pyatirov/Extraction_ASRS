@@ -48,7 +48,42 @@ namespace ASRS
             tb_Results.Text = sb.ToString();
         }
 
+        private double CalculateTermValue(Term term, double[] solution, double[] K)
+        {
+            double value = term.Coefficient;
+            value *= K[term.KIndex]; // Умножаем на константу равновесия
+
+            foreach (var varEntry in term.Variables!)
+            {
+                int varIndex = varEntry.Key;
+                int exponent = varEntry.Value;
+                value *= Math.Pow(solution[varIndex], exponent); // Учитываем степень переменной
+            }
+
+            return value;
+        }
+
+        //private string GetPhase(string formName)
+        //{
+        //    // Предполагается, что baseForms содержит формы с свойством Phase
+        //    var form = baseForms.FirstOrDefault(f => f.Name == formName);
+        //    return form?.Phase ?? "Неизвестно"; // Если фаза не определена, возвращаем "Неизвестно"
+        //}
+
+        private void AddToTotal(Dictionary<string, Dictionary<string, double>> totals,
+    string phase, string formName, double value)
+        {
+            if (!totals.ContainsKey(phase))
+                totals[phase] = new Dictionary<string, double>();
+
+            if (!totals[phase].ContainsKey(formName))
+                totals[phase][formName] = 0;
+
+            totals[phase][formName] += value;
+        }
+
     }
+
 
 
     //public static void Residuals(double[] x, double[] fi, object obj)
