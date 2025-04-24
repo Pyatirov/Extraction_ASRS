@@ -4,16 +4,16 @@
 winexe
 C#
 .cs
-D:\Projects\ASRS\ASRS\obj\Debug\net8.0-windows\
+D:\Projects\Extraction_ASRS\ASRS\obj\Debug\net8.0-windows\
 ASRS
 none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
-D:\Projects\ASRS\ASRS\App.xaml
+D:\Projects\Extraction_ASRS\ASRS\App.xaml
 7-1204692540
 
 14-1871010098
-219-210429587
+219-1742507686
 MainWindow.xaml;Researcher\AddMechanism.xaml;Researcher\AddReactionWindow.xaml;Researcher\CalculationResults.xaml;Researcher\ComponentMatrix.xaml;Researcher\Researcher.xaml;Specialist\Specialist.xaml;
 
 False
