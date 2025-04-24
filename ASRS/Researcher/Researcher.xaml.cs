@@ -21,7 +21,7 @@ namespace ASRS
             if (value == null)
                 return Visibility.Collapsed;
 
-            var mechanism = value as Mechanisms; // Замените YourDataType на ваш класс
+            var mechanism = value as Mechanisms; 
             if (mechanism == null)
                 return Visibility.Collapsed;
 
@@ -178,6 +178,16 @@ namespace ASRS
             matrix.Show();
         }
 
+        private bool IsLogScale => rbLog.IsChecked ?? true;
+
+        private void rb_Checked(object sender, RoutedEventArgs e)
+        {
+            if (cb_Mechanisms_Experiment.SelectedItem != null)
+            {
+                Create_Input_Constants_Grid_Async();
+            }
+        }
+
         private async void Create_Input_Constants_Grid_Async()
         {
             try
@@ -209,7 +219,7 @@ namespace ASRS
                             // Элементы
                             var lgKBlock = new TextBlock
                             {
-                                Text = "K",
+                                Text = IsLogScale ? "lgK" : "K", // Устанавливаем текст в зависимости от выбора
                                 FontSize = 16,
                                 VerticalAlignment = VerticalAlignment.Bottom,
                                 Margin = new Thickness(10, 0, 0, 0)
@@ -654,19 +664,22 @@ namespace ASRS
             {
                 if (child is Grid grid)
                 {
-                    // Ищем TextBox с константой внутри Grid
                     var textBox = grid.Children.OfType<TextBox>().FirstOrDefault();
 
                     if (textBox != null && !string.IsNullOrEmpty(textBox.Tag?.ToString()))
                     {
-                        // Парсим значение и создаем объект константы
                         if (double.TryParse(textBox.Text, out double value))
                         {
+                            // Проверка режима ввода и преобразование
+                            if (IsLogScale) // Если выбран режим "lgK"
+                            {
+                                value = Math.Pow(10, value); // Преобразуем lgK → K: K = 10^(-lgK)
+                            }
+
                             constants.Add(value);
                         }
                         else
                         {
-                            // Обработка некорректного ввода (можно добавить логирование или уведомление)
                             Debug.WriteLine($"Некорректное значение для формы: {textBox.Tag}");
                         }
                     }
@@ -765,7 +778,35 @@ namespace ASRS
                 alglib.minlmoptimize(state, Residuals, null, residualData);
                 alglib.minlmresults(state, out double[] solution, out report);
 
-                Solutions.Add(solution.ToList());
+                var equationsForPoint = Solutions[point]; // equationsDictionary — результат BuildEquations()
+                var phaseFormTotals = new Dictionary<string, Dictionary<string, double>>();
+
+                //foreach (var formEntry in equationsForPoint)
+                //{
+                //    var formName = formEntry.Key;
+                //    var equationData = formEntry.Value;
+                //    var terms = equationData.Terms;
+                //    var currentPhase = baseForms.FirstOrDefault(f => f.Name == formName); // Фаза текущего уравнения
+
+                //    foreach (var term in terms)
+                //    {
+                //        double termValue = CalculateTermValue(term, solution, residualData.K);
+
+                //        // Обрабатываем все формы, участвующие в этом терме:
+                //        foreach (var varIndex in term.Variables.Keys)
+                //        {
+                //            string involvedFormName = baseForms[varIndex].Name;
+                //            AddToTotal(phaseFormTotals, currentPhase, involvedFormName, termValue);
+                //        }
+
+                //        // Учитываем саму форму formName в текущей фазе:
+                //        AddToTotal(phaseFormTotals, currentPhase, formName, termValue);
+                //    }
+                //}
+
+                //// Сохраняем результаты для текущей точки:
+                //Solutions.Add(solution.ToList());
+                //PhaseFormTotals.Add(phaseFormTotals);
             }
 
             CalculationResults calculationResults = new CalculationResults(Solutions);
@@ -773,11 +814,45 @@ namespace ASRS
 
         }
 
+        //private string GetPhase(string formName)
+        //{
+        //    // Предполагается, что baseForms содержит формы с свойством Phase
+        //    var form = baseForms.FirstOrDefault(f => f.Name == formName);
+        //    return form?.Phase ?? "Неизвестно"; // Если фаза не определена, возвращаем "Неизвестно"
+        //}
+
+        private double CalculateTermValue(Term term, double[] solution, double[] K)
+        {
+            double value = term.Coefficient;
+            value *= K[term.KIndex]; // Умножаем на константу равновесия
+
+            foreach (var varEntry in term.Variables!)
+            {
+                int varIndex = varEntry.Key;
+                int exponent = varEntry.Value;
+                value *= Math.Pow(solution[varIndex], exponent); // Учитываем степень переменной
+            }
+
+            return value;
+        }
+
+        private void AddToTotal(Dictionary<string, Dictionary<string, double>> totals,
+    string phase, string formName, double value)
+        {
+            if (!totals.ContainsKey(phase))
+                totals[phase] = new Dictionary<string, double>();
+
+            if (!totals[phase].ContainsKey(formName))
+                totals[phase][formName] = 0;
+
+            totals[phase][formName] += value;
+        }
+
         private void TextBox_PreviewTextInputConcentration(object sender, System.Windows.Input.TextCompositionEventArgs e)
         {
             char Symb = e.Text[0];
 
-            if (!char.IsDigit(Symb) && Symb != ',')
+            if (!char.IsDigit(Symb) && Symb != ',' && Symb != ',' && Symb != '-')
                 e.Handled = true;
         }
         private void TextBox_PreviewKeyDown(object sender, System.Windows.Input.KeyEventArgs e)

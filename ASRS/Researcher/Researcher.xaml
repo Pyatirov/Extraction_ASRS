@@ -16,6 +16,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                         <RowDefinition Height="Auto"/>
@@ -31,6 +32,11 @@
                     <ScrollViewer Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <UniformGrid x:Name="ug_Constants_Inputs_Panel" Columns="1" Margin="10" VerticalAlignment="Top" HorizontalAlignment="Center"/>
                     </ScrollViewer>
+
+                    <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="10">
+                        <RadioButton x:Name="rbLog" Content="lgK" IsChecked="True" GroupName="InputType" Checked="rb_Checked" Margin="5"/>
+                        <RadioButton x:Name="rbExplicit" Content="K" GroupName="InputType" Checked="rb_Checked" Margin="5"/>
+                    </StackPanel>
 
                     <Button Click="bt_Calculate_Click" Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Content="Расчет" Margin="10,10" Height="40" Width="200"/>
                     <Button Click="bt_Show_Component_Matrix_Click" Grid.Row="0" Grid.RowSpan="2" Grid.Column="1" Content="Посмотреть компонентную матрицу" Height="40" Width="210"/>
