@@ -6,7 +6,6 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Data;
-using static ASRS.Database.ConnectToDB;
 
 namespace ASRS
 {
@@ -146,6 +145,12 @@ namespace ASRS
         private void AddMechanism_Closed(object sender, EventArgs e)
         {
             AddReactionWindow.ReactionAdded -= LoadDataAsync;
+        }
+
+        private void bt_Add_EquMatrix(object sender, RoutedEventArgs e)
+        {
+            AddEquMatrix newWindow = new AddEquMatrix();
+            newWindow.Show();
         }
     }
 

@@ -3,11 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Globalization;
-using System.Reflection.Metadata;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using static ASRS.Database.ConnectToDB;
 
 namespace ASRS
 {

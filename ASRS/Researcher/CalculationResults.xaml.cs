@@ -1,15 +1,9 @@
 ﻿using ASRS.Database;
-using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using static alglib;
-using static ASRS.Database.ConnectToDB;
-using static ASRS.Researcher;
 
 namespace ASRS
 {
