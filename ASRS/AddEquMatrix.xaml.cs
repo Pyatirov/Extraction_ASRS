@@ -258,49 +258,49 @@ namespace ASRS
             e.Handled = !double.TryParse(newText, out _);
         }
 
-        private async void BtnSaveToDb_Click(object sender, RoutedEventArgs e)
-        {
-            using (var context = new ApplicationContext())
-            {
-                // Сохранение базовых форм
-                foreach (var name in baseNames)
-                {
-                    await GetOrCreateBaseForm(context, name);
-                }
+        //private async void BtnSaveToDb_Click(object sender, RoutedEventArgs e)
+        //{
+        //    using (var context = new ApplicationContext())
+        //    {
+        //        // Сохранение базовых форм
+        //        foreach (var name in baseNames)
+        //        {
+        //            await GetOrCreateBaseForm(context, name);
+        //        }
 
-                // Сохранение образующихся форм
-                foreach (var name in formingNames)
-                {
-                    await GetOrCreateFormingForm(context, name);
-                }
+        //        // Сохранение образующихся форм
+        //        foreach (var name in formingNames)
+        //        {
+        //            await GetOrCreateFormingForm(context, name);
+        //        }
 
-                // Сохранение реакций
-                var reactions = (dataGrid.ItemsSource as IEnumerable<ReactionRow>)?
-                    .Where(row => row.Coefficients.Any());
+        //        // Сохранение реакций
+        //        var reactions = (dataGrid.ItemsSource as IEnumerable<ReactionRow>)?
+        //            .Where(row => row.Coefficients.Any());
 
-                if (reactions != null)
-                {
-                    foreach (var row in reactions)
-                    {
-                        var reaction = new Reaction
-                        {
-                            // Предполагается, что первые три базовые формы — входные
-                            Inp1 = baseNames[0],
-                            Inp2 = baseNames[1],
-                            Inp3 = baseNames[2],
-                            // Первая образующаяся форма — выходная
-                            Prod = formingNames[0],
-                            KInp1 = row.Coefficients.GetValueOrDefault(baseNames[0]),
-                            KInp2 = row.Coefficients.GetValueOrDefault(baseNames[1]),
-                            KInp3 = row.Coefficients.GetValueOrDefault(baseNames[2]),
-                            KProd = row.Coefficients.GetValueOrDefault(formingNames[0])
-                        };
-                        context.Reactions.Add(reaction);
-                    }
-                    await context.SaveChangesAsync();
-                }
-            }
-        }
+        //        if (reactions != null)
+        //        {
+        //            foreach (var row in reactions)
+        //            {
+        //                var reaction = new Reaction
+        //                {
+        //                    // Предполагается, что первые три базовые формы — входные
+        //                    Inp1 = baseNames[0],
+        //                    Inp2 = baseNames[1],
+        //                    Inp3 = baseNames[2],
+        //                    // Первая образующаяся форма — выходная
+        //                    Prod = formingNames[0],
+        //                    KInp1 = row.Coefficients.GetValueOrDefault(baseNames[0]),
+        //                    KInp2 = row.Coefficients.GetValueOrDefault(baseNames[1]),
+        //                    KInp3 = row.Coefficients.GetValueOrDefault(baseNames[2]),
+        //                    KProd = row.Coefficients.GetValueOrDefault(formingNames[0])
+        //                };
+        //                context.Reactions.Add(reaction);
+        //            }
+        //            await context.SaveChangesAsync();
+        //        }
+        //    }
+        //}
 
         private async Task<BaseForm> GetOrCreateBaseForm(ApplicationContext context, string name)
         {

@@ -10,11 +10,11 @@ none
 false
 TRACE;DEBUG;NET;NET8_0;NETCOREAPP
 D:\Projects\ASRS\ASRS\App.xaml
-8-960143762
+91514257483
 
-15-990260967
+161802353200
 219-210429587
-AddEquMatrix.xaml;MainWindow.xaml;Researcher\AddMechanism.xaml;Researcher\AddReactionWindow.xaml;Researcher\CalculationResults.xaml;Researcher\ComponentMatrix.xaml;Researcher\Researcher.xaml;Specialist\Specialist.xaml;
+AddEquMatrix.xaml;EquMatrix.xaml;MainWindow.xaml;Researcher\AddMechanism.xaml;Researcher\AddReactionWindow.xaml;Researcher\CalculationResults.xaml;Researcher\ComponentMatrix.xaml;Researcher\Researcher.xaml;Specialist\Specialist.xaml;
 
 True
 

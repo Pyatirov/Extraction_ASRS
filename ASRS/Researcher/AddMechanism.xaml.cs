@@ -149,7 +149,7 @@ namespace ASRS
 
         private void bt_Add_EquMatrix(object sender, RoutedEventArgs e)
         {
-            AddEquMatrix newWindow = new AddEquMatrix();
+            EquMatrix newWindow = new EquMatrix();
             newWindow.Show();
         }
     }
